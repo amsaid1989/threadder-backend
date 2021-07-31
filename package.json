@@ -6,10 +6,19 @@
     "author": "Abdelrahman <said.abdelrahman89@gmail.com>",
     "license": "MIT",
     "dependencies": {
+        "axios": "^0.21.1",
+        "connect-mongodb-session": "^3.0.0",
         "cors": "^2.8.5",
-        "express": "^4.17.1"
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "express-session": "^1.17.2",
+        "oauth-1.0a": "^2.2.6",
+        "query-string": "^7.0.1"
     },
     "devDependencies": {
         "nodemon": "^2.0.12"
+    },
+    "scripts": {
+        "start": "nodemon src/index.js"
     }
 }
