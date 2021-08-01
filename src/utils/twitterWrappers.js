@@ -21,7 +21,7 @@ const oauth = OAuth({
     },
 });
 
-function makeAuthorizedRequest(request) {
+function addTwitterAuthorizationHeader(request) {
     return axios({
         ...request,
         headers: oauth.toHeader(oauth.authorize(request)),
@@ -42,7 +42,7 @@ function sendTwitterRequest(url, method, data = {}, params = {}) {
         requestForAuth.params = params;
     }
 
-    return makeAuthorizedRequest(requestForAuth);
+    return addTwitterAuthorizationHeader(requestForAuth);
 }
 
 export function getRequestToken() {

@@ -3,7 +3,8 @@ import express from "express";
 import session from "express-session";
 import cors from "cors";
 import mongoConnect from "connect-mongodb-session";
-import twitterRouter from "./routes/twitterAPI.js";
+import twitterRouter from "./routes/twitterAPIRouter.js";
+import sessionEndRouter from "./routes/sessionEndRouter.js";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(session(sessionOptions));
 
 app.use(twitterRouter);
+app.use(sessionEndRouter);
 
 app.get("/", (req, res) => {
     res.redirect("/request_token");
