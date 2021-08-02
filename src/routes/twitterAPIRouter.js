@@ -4,6 +4,7 @@ import {
     getRequestToken,
     getAccessToken,
     getUserData,
+    publishThread,
 } from "../utils/twitterWrappers.js";
 
 const router = express.Router();
@@ -93,6 +94,21 @@ router.get("/callback", (req, res) => {
                 res.send(err);
             });
     }
+});
+
+router.use(express.json());
+
+router.post("/publish_thread", (req, res) => {
+    const tweets = req.body.tweets;
+
+    publishThread(tweets, {
+        key: req.session.accessToken,
+        secret: req.session.accessTokenSecret,
+    }).catch((err) => {
+        console.log(err.response.data);
+    });
+
+    res.end();
 });
 
 export default router;

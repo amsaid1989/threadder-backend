@@ -21,44 +21,48 @@ const oauth = OAuth({
     },
 });
 
-function addTwitterAuthorizationHeader(request) {
+function addTwitterAuthorizationHeader(request, token = undefined) {
+    const oauth_data = token
+        ? oauth.authorize(request, token)
+        : oauth.authorize(request);
+
     return axios({
         ...request,
-        headers: oauth.toHeader(oauth.authorize(request)),
+        headers: oauth.toHeader(oauth_data),
     });
 }
 
-function sendTwitterRequest(url, method, data = {}, params = {}) {
+function sendTwitterRequest(requestObj) {
     const requestForAuth = {
-        url: url,
-        method: method,
+        url: requestObj.url,
+        method: requestObj.method,
     };
 
-    if (Object.entries(data).length > 0) {
-        requestForAuth.data = data;
+    if (requestObj.data && Object.entries(requestObj.data).length > 0) {
+        requestForAuth.data = requestObj.data;
     }
 
-    if (Object.entries(params).length > 0) {
-        requestForAuth.params = params;
+    if (requestObj.params && Object.entries(requestObj.params).length > 0) {
+        requestForAuth.params = requestObj.params;
     }
 
-    return addTwitterAuthorizationHeader(requestForAuth);
+    return addTwitterAuthorizationHeader(requestForAuth, requestObj.token);
 }
 
 export function getRequestToken() {
-    return sendTwitterRequest(
-        "https://api.twitter.com/oauth/request_token",
-        "post",
-        { oauth_callback: "http://localhost:5000/callback" }
-    );
+    return sendTwitterRequest({
+        url: "https://api.twitter.com/oauth/request_token",
+        method: "post",
+        data: { oauth_callback: "http://localhost:5000/callback" },
+    });
 }
 
 export function getAccessToken(twitterResponseObj) {
-    return sendTwitterRequest(
-        "https://api.twitter.com/oauth/access_token",
-        "post",
-        twitterResponseObj
-    );
+    return sendTwitterRequest({
+        url: "https://api.twitter.com/oauth/access_token",
+        method: "post",
+        data: twitterResponseObj,
+    });
 }
 
 export function getUserData(id) {
@@ -69,5 +73,29 @@ export function getUserData(id) {
         },
     });
 
-    return sendTwitterRequest(url, "get");
+    return sendTwitterRequest({ url: url, method: "get" });
+}
+
+function postTweet(text, token, previousTweetID = undefined) {
+    const url = queryString.stringifyUrl({
+        url: "https://api.twitter.com/1.1/statuses/update.json",
+        query: {
+            status: text,
+            in_reply_to_status_id: previousTweetID,
+        },
+    });
+
+    return sendTwitterRequest({
+        url: url,
+        method: "post",
+        token: token,
+    });
+}
+
+export async function publishThread(thread, token) {
+    let lastID;
+
+    for (const tweet of thread) {
+        lastID = (await postTweet(tweet, token, lastID)).data.id_str;
+    }
 }
