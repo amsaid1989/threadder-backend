@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.get("/request_token", (req, res) => {
+router.get("/request_token", (req, res, next) => {
     // Save the referer URL in the user session for later redirects
     req.session.refererURL = req.headers.referer;
 
@@ -49,14 +49,12 @@ router.get("/request_token", (req, res) => {
                 res.send("Callback not confirmed");
             }
         })
-        .catch((err) => {
-            res.send(err);
-        });
+        .catch(next);
 });
 
-router.get("/callback", (req, res) => {
+router.get("/callback", (req, res, next) => {
     if (req.query.oauth_token !== req.session.requestToken) {
-        res.send("Authentication failed because of token mismatch");
+        res.sendStatus(403);
     } else {
         getAccessToken(req.query)
             .then((response) => {
@@ -90,25 +88,23 @@ router.get("/callback", (req, res) => {
                     })
                     .redirect(302, req.session.refererURL);
             })
-            .catch((err) => {
-                res.send(err);
-            });
+            .catch(next);
     }
 });
 
 router.use(express.json());
 
-router.post("/publish_thread", (req, res) => {
+router.post("/publish_thread", (req, res, next) => {
     const tweets = req.body.tweets;
 
     publishThread(tweets, {
         key: req.session.accessToken,
         secret: req.session.accessTokenSecret,
-    }).catch((err) => {
-        console.log(err.response.data);
-    });
-
-    res.end();
+    })
+        .then(() => {
+            res.send("Thread published successfully");
+        })
+        .catch(next);
 });
 
 export default router;
