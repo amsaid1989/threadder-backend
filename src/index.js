@@ -15,8 +15,10 @@ app.use(
     cors({
         origin: [
             "http://localhost:3000",
+            "https://amsaid1989.github.io/",
             "https://amsaid1989.github.io/threadder/",
         ],
+        methods: ["GET", "POST"],
         credentials: true,
     })
 );
