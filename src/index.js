@@ -21,9 +21,9 @@ const corsOptions = {
     credentials: true,
 };
 
-app.options("*", cors(corsOptions));
+app.options("*", cors());
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 const MongoDBStore = mongoConnect(session);
 const store = new MongoDBStore(
