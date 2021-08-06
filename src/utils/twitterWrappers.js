@@ -72,10 +72,15 @@ export function getRequestToken() {
      * result.
      */
 
+    const SERVER =
+        process.env.NODE_ENV === "development"
+            ? process.env.DEV_SERVER
+            : process.env.PRODUCTION_SERVER;
+
     return sendTwitterRequest({
         url: "https://api.twitter.com/oauth/request_token",
         method: "post",
-        data: { oauth_callback: "http://localhost:5000/callback" },
+        data: { oauth_callback: `${SERVER}/callback` },
     });
 }
 
