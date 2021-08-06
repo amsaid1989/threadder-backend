@@ -11,17 +11,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(
-    cors({
-        origin: [
-            "http://localhost:3000",
-            "https://amsaid1989.github.io/",
-            "https://amsaid1989.github.io/threadder/",
-        ],
-        methods: ["GET", "POST"],
-        credentials: true,
-    })
-);
+const corsOptions = {
+    origin: [
+        "http://localhost:3000",
+        "https://amsaid1989.github.io/",
+        "https://amsaid1989.github.io/threadder/",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+};
+
+app.options("*", cors(corsOptions));
+
+app.use(cors(corsOptions));
 
 const MongoDBStore = mongoConnect(session);
 const store = new MongoDBStore(
