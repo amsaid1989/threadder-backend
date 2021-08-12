@@ -11,6 +11,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
+// set the trust proxy for Heroku
+app.set("trust proxy", 1);
+
 const corsOptions = {
     origin: true,
     credentials: true,
