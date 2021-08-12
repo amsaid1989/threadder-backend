@@ -89,6 +89,7 @@ router.get("/callback", (req, res, next) => {
 
                 res.set("Cache-Control", "no-store, max-age=0")
                     .cookie("user", JSON.stringify(req.session.user), {
+                        sameSite: "none",
                         secure: true,
                         httpOnly: false,
                     })
