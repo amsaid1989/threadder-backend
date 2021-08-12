@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import queryString from "query-string";
 import {
@@ -7,12 +8,16 @@ import {
     publishThread,
 } from "../utils/twitterWrappers.js";
 
+dotenv.config();
+
 const router = express.Router();
 
-router.get("/request_token", (req, res, next) => {
-    // Save the referer URL in the user session for later redirects
-    req.session.refererURL = req.headers.referer;
+const appURL =
+    process.env.NODE_ENV === "production"
+        ? "https://amsaid1989.github.io/threadder/"
+        : "http://localhost:3000";
 
+router.get("/request_token", (req, res, next) => {
     getRequestToken()
         .then((response) => {
             const {
@@ -86,7 +91,7 @@ router.get("/callback", (req, res, next) => {
                     .cookie("user", JSON.stringify(req.session.user), {
                         secure: true,
                     })
-                    .redirect(302, req.session.refererURL);
+                    .redirect(302, appURL);
             })
             .catch(next);
     }
