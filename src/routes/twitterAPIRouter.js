@@ -91,7 +91,7 @@ router.get("/callback", (req, res, next) => {
                     .cookie("user", JSON.stringify(req.session.user), {
                         sameSite: "none",
                         secure: true,
-                        httpOnly: true,
+                        httpOnly: false,
                     })
                     .redirect(302, appURL);
             })
