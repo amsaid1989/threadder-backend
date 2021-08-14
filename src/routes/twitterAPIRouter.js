@@ -87,13 +87,12 @@ router.get("/callback", (req, res, next) => {
                     ""
                 );
 
-                res.set("Cache-Control", "no-store, max-age=0")
-                    .cookie("user", JSON.stringify(req.session.user), {
-                        sameSite: "none",
-                        secure: true,
-                        httpOnly: false,
-                    })
-                    .redirect(302, appURL);
+                const redirectURL = queryString.stringifyUrl({
+                    url: appURL,
+                    query: req.session.user,
+                });
+
+                res.redirect(302, redirectURL);
             })
             .catch(next);
     }
