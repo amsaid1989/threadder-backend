@@ -101,6 +101,7 @@ router.get("/callback", (req, res, next) => {
 router.use(express.json());
 
 router.post("/publish_thread", (req, res, next) => {
+    console.log(req.session);
     const tweets = req.body.tweets;
 
     publishThread(tweets, {
