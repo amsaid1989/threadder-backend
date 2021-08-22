@@ -46,15 +46,15 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
     resave: true,
     saveUninitialized: false,
-    cookie: {
-        sameSite: "none",
-    },
+    // cookie: {
+    //     sameSite: "none",
+    // },
 };
 
 if (process.env.NODE_ENV === "production") {
     sessionOptions.store = store;
-    sessionOptions.cookie.secure = false;
-    sessionOptions.cookie.maxAge = 86400000;
+    // sessionOptions.cookie.secure = false;
+    // sessionOptions.cookie.maxAge = 86400000;
 }
 
 app.use(session(sessionOptions));
