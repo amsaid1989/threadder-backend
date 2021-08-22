@@ -12,7 +12,8 @@ const app = express();
 const PORT = process.env.PORT;
 
 const corsOptions = {
-    origin: true,
+    origin: ["http://localhost:3000", "https://amsaid1989.github.io"],
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
     credentials: true,
 };
 
