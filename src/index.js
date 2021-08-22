@@ -14,6 +14,13 @@ const PORT = process.env.PORT;
 // set the trust proxy for Heroku
 app.set("trust proxy", 1);
 
+function secure(req, res, next) {
+    req.headers["x-forwarded-proto"] = "https";
+    next();
+}
+
+app.use(secure);
+
 const corsOptions = {
     origin: true,
     credentials: true,
