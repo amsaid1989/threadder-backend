@@ -46,9 +46,7 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        sameSite: "none",
-    },
+    cookie: {},
 };
 
 if (process.env.NODE_ENV === "production") {
