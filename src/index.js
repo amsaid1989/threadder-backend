@@ -44,9 +44,11 @@ store.on("error", function (err) {
 
 const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
-    resave: false,
+    resave: true,
     saveUninitialized: false,
-    cookie: {},
+    cookie: {
+        sameSite: "strict",
+    },
 };
 
 if (process.env.NODE_ENV === "production") {
