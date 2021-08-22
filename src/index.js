@@ -11,9 +11,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
-// set the trust proxy for Heroku
-app.set("trust proxy", 1);
-
 const corsOptions = {
     origin: true,
     credentials: true,
@@ -46,16 +43,19 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
     resave: true,
     saveUninitialized: false,
-    // cookie: {
-    //     sameSite: "none",
-    // },
+    cookie: {
+        sameSite: "none",
+    },
 };
 
 if (process.env.NODE_ENV === "production") {
+    // set the trust proxy for Heroku
+    app.set("trust proxy", 1);
+
     sessionOptions.store = store;
     sessionOptions.proxy = true;
-    // sessionOptions.cookie.secure = false;
-    // sessionOptions.cookie.maxAge = 86400000;
+    sessionOptions.cookie.secure = false;
+    sessionOptions.cookie.maxAge = 86400000;
 }
 
 app.use(session(sessionOptions));
