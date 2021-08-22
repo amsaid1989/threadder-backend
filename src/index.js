@@ -47,7 +47,7 @@ const sessionOptions = {
     resave: true,
     saveUninitialized: false,
     cookie: {
-        sameSite: "strict",
+        sameSite: "none",
     },
 };
 
