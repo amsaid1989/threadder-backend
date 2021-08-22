@@ -54,7 +54,7 @@ if (process.env.NODE_ENV === "production") {
 
     sessionOptions.store = store;
     sessionOptions.proxy = true;
-    sessionOptions.cookie.secure = false;
+    sessionOptions.cookie.secure = true;
     sessionOptions.cookie.maxAge = 86400000;
 }
 
