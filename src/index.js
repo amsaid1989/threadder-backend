@@ -52,7 +52,7 @@ const sessionOptions = {
 if (process.env.NODE_ENV === "production") {
     sessionOptions.store = store;
     sessionOptions.cookie.secure = true;
-    sessionOptions.cookie.maxAge = 3600000;
+    sessionOptions.cookie.maxAge = 86400000;
 }
 
 app.use(session(sessionOptions));

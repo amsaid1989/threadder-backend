@@ -47,6 +47,7 @@ router.get("/request_token", (req, res, next) => {
                     if (err) {
                         console.log(err);
                     } else {
+                        console.log(req.session);
                         res.json({ redirect: redirectURL });
                     }
                 });
