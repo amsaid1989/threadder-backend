@@ -47,7 +47,7 @@ router.get("/request_token", (req, res, next) => {
                     if (err) {
                         console.log(err);
                     } else {
-                        console.log(req.session);
+                        console.log(req.sessionID);
                         res.json({ redirect: redirectURL });
                     }
                 });
@@ -102,7 +102,7 @@ router.get("/callback", (req, res, next) => {
 router.use(express.json());
 
 router.post("/publish_thread", (req, res, next) => {
-    console.log(req.session);
+    console.log(req.sessionID);
     const tweets = req.body.tweets;
 
     publishThread(tweets, {
