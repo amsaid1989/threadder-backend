@@ -43,7 +43,7 @@ store.on("error", function (err) {
 const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
     resave: true,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
         sameSite: "none",
     },
@@ -55,6 +55,7 @@ if (process.env.NODE_ENV === "production") {
 
     sessionOptions.store = store;
     sessionOptions.proxy = true;
+    sessionOptions.rolling = true;
     sessionOptions.cookie.secure = true;
     sessionOptions.cookie.maxAge = 86400000;
 }
