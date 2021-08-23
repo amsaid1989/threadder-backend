@@ -42,8 +42,8 @@ store.on("error", function (err) {
 
 const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
         sameSite: "none",
     },
@@ -55,9 +55,8 @@ if (process.env.NODE_ENV === "production") {
 
     sessionOptions.store = store;
     sessionOptions.proxy = true;
-    sessionOptions.rolling = true;
-    sessionOptions.cookie.secure = true;
-    sessionOptions.cookie.maxAge = 86400000;
+    sessionOptions.cookie.secure = false;
+    sessionOptions.cookie.maxAge = 24 * 60 * 60 * 1000;
 }
 
 app.use(session(sessionOptions));
