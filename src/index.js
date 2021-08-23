@@ -55,6 +55,7 @@ if (process.env.NODE_ENV === "production") {
 
     sessionOptions.store = store;
     sessionOptions.proxy = true;
+    sessionOptions.cookie.domain = ".github.io";
     sessionOptions.cookie.secure = false;
     sessionOptions.cookie.maxAge = 24 * 60 * 60 * 1000;
 }
