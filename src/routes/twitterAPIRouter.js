@@ -59,6 +59,7 @@ router.get("/request_token", (req, res, next) => {
 });
 
 router.get("/callback", (req, res, next) => {
+    console.log(req.sessionID);
     if (req.query.oauth_token !== req.session.requestToken) {
         res.sendStatus(403);
     } else {
