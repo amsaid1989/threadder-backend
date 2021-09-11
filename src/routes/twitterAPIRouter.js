@@ -1,11 +1,21 @@
 import dotenv from "dotenv";
+import fs, { stat } from "fs";
+import path from "path";
+import url from "url";
 import express from "express";
 import queryString from "query-string";
+import multer from "multer";
+import TwitterStorage from "../utils/TwitterStorage.js";
 import {
     getRequestToken,
     getAccessToken,
     getUserData,
     publishThread,
+    initMediaUpload,
+    appendMediaFile,
+    finalizeMediaUpload,
+    getUploadStatus,
+    checkUploadStatus,
 } from "../utils/twitterWrappers.js";
 
 dotenv.config();
@@ -103,14 +113,34 @@ router.use(express.json());
 router.post("/publish_thread", (req, res, next) => {
     const tweets = req.body.tweets;
 
-    publishThread(tweets, {
+    const token = {
         key: req.session.accessToken,
         secret: req.session.accessTokenSecret,
-    })
+    };
+
+    publishThread(tweets, token)
         .then(() => {
             res.send("Thread published successfully");
         })
         .catch(next);
+});
+
+const storage = TwitterStorage({});
+
+const upload = multer({ storage }).single("mediaFile");
+
+router.post("/upload_media", (req, res, next) => {
+    upload(req, res, (err) => {
+        if (err) {
+            next(err);
+        } else {
+            if (req?.file?.media_id) {
+                res.json({ media_id: req.file.media_id });
+            } else {
+                res.status(500).send("Internal server error");
+            }
+        }
+    });
 });
 
 export default router;

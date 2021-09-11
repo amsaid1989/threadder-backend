@@ -12,6 +12,8 @@
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-session": "^1.17.2",
+        "form-data": "^4.0.0",
+        "multer": "^1.4.3",
         "oauth-1.0a": "^2.2.6",
         "query-string": "^7.0.1"
     },
@@ -20,7 +22,7 @@
     },
     "scripts": {
         "start": "node src/index.js",
-        "dev": "nodemon src/index.js",
+        "serve": "nodemon src/index.js",
         "deploy": "git push heroku main"
     }
 }
