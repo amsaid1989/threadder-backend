@@ -78,6 +78,12 @@ TwitterStorage.prototype._handleFile = function _handleFile(req, file, cb) {
 };
 
 TwitterStorage.prototype._removeFile = function _removeFile(req, file, cb) {
+    delete file.destination;
+    delete file.filename;
+    delete file.path;
+    delete file.size;
+    delete file.chunks;
+
     cb();
 };
 

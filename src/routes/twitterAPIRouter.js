@@ -1,7 +1,4 @@
 import dotenv from "dotenv";
-import fs, { stat } from "fs";
-import path from "path";
-import url from "url";
 import express from "express";
 import queryString from "query-string";
 import multer from "multer";
@@ -11,11 +8,6 @@ import {
     getAccessToken,
     getUserData,
     publishThread,
-    initMediaUpload,
-    appendMediaFile,
-    finalizeMediaUpload,
-    getUploadStatus,
-    checkUploadStatus,
 } from "../utils/twitterWrappers.js";
 
 dotenv.config();
@@ -127,7 +119,24 @@ router.post("/publish_thread", (req, res, next) => {
 
 const storage = TwitterStorage({});
 
-const upload = multer({ storage }).single("mediaFile");
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        const supportedTypes = [".png", ".jpg", ".jpeg", ".gif", ".webp"];
+
+        const [_, ext] = file.originalname.split(/(\..+$)/);
+
+        if (ext && supportedTypes.includes(ext)) {
+            cb(null, true);
+        } else {
+            cb(null, false);
+        }
+    },
+    limits: {
+        fileSize: 15 * 1000 * 1000,
+        files: 1,
+    },
+}).single("mediaFile");
 
 router.post("/upload_media", (req, res, next) => {
     upload(req, res, (err) => {
@@ -137,7 +146,7 @@ router.post("/upload_media", (req, res, next) => {
             if (req?.file?.media_id) {
                 res.json({ media_id: req.file.media_id });
             } else {
-                res.status(500).send("Internal server error");
+                res.status(500).send("Upload failed");
             }
         }
     });
