@@ -130,7 +130,7 @@ export function getUserData(id) {
     return sendTwitterRequest({ url: url, method: "get" });
 }
 
-function postTweet(text, token, previousTweetID = undefined) {
+function postTweet(text, mediaIDs, token, previousTweetID = undefined) {
     /**
      * Makes a request to Twitter's 'statuses/update' endpoint to
      * publish a tweet on behalf of a user.
@@ -143,6 +143,7 @@ function postTweet(text, token, previousTweetID = undefined) {
         url: "https://api.twitter.com/1.1/statuses/update.json",
         query: {
             status: text,
+            media_ids: mediaIDs.join(","),
             in_reply_to_status_id: previousTweetID,
         },
     });
@@ -164,7 +165,8 @@ export async function publishThread(thread, token) {
     let lastID;
 
     for (const tweet of thread) {
-        lastID = (await postTweet(tweet, token, lastID)).data.id_str;
+        lastID = (await postTweet(tweet.text, tweet.media, token, lastID)).data
+            .id_str;
     }
 }
 
