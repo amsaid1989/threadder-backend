@@ -62,48 +62,64 @@ router.get("/request_token", (req, res, next) => {
 router.get("/callback", (req, res, next) => {
     if (req.query.oauth_token !== req.session.requestToken) {
         res.sendStatus(403);
-    } else {
-        getAccessToken(req.query)
-            .then((response) => {
-                const {
-                    oauth_token,
-                    oauth_token_secret,
-                    user_id,
-                    screen_name,
-                } = queryString.parse(response.data);
 
-                // Save the access tokens in the user session
-                req.session.accessToken = oauth_token;
-                req.session.accessTokenSecret = oauth_token_secret;
-                req.session.user = { screenName: screen_name };
-
-                return getUserData(user_id);
-            })
-            .then((user) => {
-                const { name, profile_image_url } = user.data;
-
-                // Complete saving the user data in the user session
-                req.session.user.name = name;
-                req.session.user.profileImage = profile_image_url.replace(
-                    "_normal",
-                    ""
-                );
-
-                const redirectURL = queryString.stringifyUrl({
-                    url: appURL,
-                    query: req.session.user,
-                });
-
-                res.redirect(302, redirectURL);
-            })
-            .catch(next);
+        return;
     }
+
+    getAccessToken(req.query)
+        .then((response) => {
+            const { oauth_token, oauth_token_secret, user_id, screen_name } =
+                queryString.parse(response.data);
+
+            // Save the access tokens in the user session
+            req.session.accessToken = oauth_token;
+            req.session.accessTokenSecret = oauth_token_secret;
+            req.session.user = { screenName: screen_name };
+
+            return getUserData(user_id);
+        })
+        .then((user) => {
+            const { name, profile_image_url } = user.data;
+
+            // Complete saving the user data in the user session
+            req.session.user.name = name;
+            req.session.user.profileImage = profile_image_url.replace(
+                "_normal",
+                ""
+            );
+
+            const redirectURL = queryString.stringifyUrl({
+                url: appURL,
+                query: req.session.user,
+            });
+
+            res.redirect(302, redirectURL);
+        })
+        .catch(next);
 });
 
 router.use(express.json());
 
 router.post("/publish_thread", (req, res, next) => {
     const tweets = req.body.tweets;
+
+    // Ensures that the provided thread is formatted appropriately.
+    // It should be an array of objects that each has the properties
+    // 'text' and 'media'
+    if (
+        !(
+            tweets instanceof Array &&
+            tweets.every(
+                (tweet) =>
+                    tweet.hasOwnProperty("text") &&
+                    tweet.hasOwnProperty("media")
+            )
+        )
+    ) {
+        res.status(400).send("Bad request");
+
+        return;
+    }
 
     const token = {
         key: req.session.accessToken,

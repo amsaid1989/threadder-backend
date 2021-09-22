@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import fs from "fs";
 import OAuth from "oauth-1.0a";
 import crypto from "crypto";
 import axios from "axios";
@@ -33,8 +32,6 @@ function addTwitterAuthorizationHeader(request, token = undefined) {
     const oauth_data = token
         ? oauth.authorize(request, token)
         : oauth.authorize(request);
-
-    // console.log(oauth.toHeader(oauth_data));
 
     return axios({
         ...request,
