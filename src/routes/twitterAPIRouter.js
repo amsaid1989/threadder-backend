@@ -49,6 +49,7 @@ router.get("/request_token", (req, res, next) => {
                     if (err) {
                         console.log(err);
                     } else {
+                        console.log("success");
                         res.json({ redirect: redirectURL });
                     }
                 });
@@ -89,7 +90,7 @@ router.get("/callback", (req, res, next) => {
             );
 
             const redirectURL = queryString.stringifyUrl({
-                url: appURL,
+                url: "http://localhost:5000",
                 query: req.session.user,
             });
 

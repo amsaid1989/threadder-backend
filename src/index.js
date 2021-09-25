@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import path from "path";
+import url from "url";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
@@ -10,6 +12,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+const _dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 const corsOptions = {
     origin: ["http://localhost:3000", "https://amsaid1989.github.io"],
@@ -20,6 +23,8 @@ const corsOptions = {
 app.options("*", cors(corsOptions));
 
 app.use(cors(corsOptions));
+
+app.use(express.static(path.join(_dirname, "public")));
 
 const MongoDBStore = mongoConnect(session);
 const store = new MongoDBStore(
@@ -60,12 +65,13 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(session(sessionOptions));
 
+app.get("/", (req, res) => {
+    res.sendFile(path.join(_dirname, "public", "index.html"));
+    // res.redirect("/request_token");
+});
+
 app.use(twitterRouter);
 app.use(sessionEndRouter);
-
-app.get("/", (req, res) => {
-    res.redirect("/request_token");
-});
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`);
