@@ -202,13 +202,10 @@ function appendChunk(mediaID, segmentIndex, chunk, token) {
     });
 }
 
-// DEBUG: Figure out why this function sometimes fails with
-// a segments don't add up to total file size error.
-// A potential solution would be to try using async/await
-// to ensure that each chunk is uploaded before starting to
-// upload the new one
 export function appendMediaFile(mediaFile, token) {
     return new Promise((resolve, reject) => {
+        let uploadedSize = 0;
+
         for (let i = 0; i < mediaFile.chunks.length; i++) {
             const buffer = mediaFile.chunks[i];
 
@@ -216,9 +213,13 @@ export function appendMediaFile(mediaFile, token) {
                 .then((res) => {
                     if (res.status < 200 || res.status > 299) {
                         reject(res);
+
+                        return;
                     }
 
-                    if (i + 1 === mediaFile.chunks.length) {
+                    uploadedSize += buffer.length;
+
+                    if (uploadedSize === mediaFile.size) {
                         resolve("Upload complete");
                     }
                 })
