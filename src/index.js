@@ -13,18 +13,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 const _dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const staticPath = path.join(_dirname, "public");
 
-const corsOptions = {
-    origin: ["http://localhost:3000", "https://amsaid1989.github.io"],
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-    credentials: true,
-};
+// const corsOptions = {
+//     origin: ["http://localhost:3000", "https://amsaid1989.github.io"],
+//     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+//     credentials: true,
+// };
 
-app.options("*", cors(corsOptions));
+// app.options("*", cors(corsOptions));
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
-app.use(express.static(path.join(_dirname, "public")));
+app.use(express.static(staticPath));
 
 const MongoDBStore = mongoConnect(session);
 const store = new MongoDBStore(
@@ -49,9 +50,9 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        sameSite: "none",
-    },
+    // cookie: {
+    //     sameSite: "none",
+    // },
 };
 
 if (process.env.NODE_ENV === "production") {
@@ -66,8 +67,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(session(sessionOptions));
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(_dirname, "public", "index.html"));
-    // res.redirect("/request_token");
+    res.sendFile(path.join(staticPath, "index.html"));
 });
 
 app.use(twitterRouter);

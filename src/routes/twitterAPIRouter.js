@@ -14,11 +14,6 @@ dotenv.config();
 
 const router = express.Router();
 
-const appURL =
-    process.env.NODE_ENV === "production"
-        ? "https://amsaid1989.github.io/threadder/"
-        : "http://localhost:3000";
-
 router.get("/request_token", (req, res, next) => {
     getRequestToken()
         .then((response) => {
@@ -49,7 +44,6 @@ router.get("/request_token", (req, res, next) => {
                     if (err) {
                         console.log(err);
                     } else {
-                        console.log("success");
                         res.json({ redirect: redirectURL });
                     }
                 });
@@ -90,7 +84,7 @@ router.get("/callback", (req, res, next) => {
             );
 
             const redirectURL = queryString.stringifyUrl({
-                url: "http://localhost:5000",
+                url: "/",
                 query: req.session.user,
             });
 
