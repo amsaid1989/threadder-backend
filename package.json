@@ -26,6 +26,6 @@
         "deploy": "git push heroku main"
     },
     "engines": {
-        "node": "14.x"
+        "node": ">=14.17"
     }
 }
