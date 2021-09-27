@@ -50,9 +50,6 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET.split(" "),
     resave: false,
     saveUninitialized: false,
-    // cookie: {
-    //     sameSite: "none",
-    // },
 };
 
 if (process.env.NODE_ENV === "production") {
@@ -61,7 +58,9 @@ if (process.env.NODE_ENV === "production") {
 
     sessionOptions.store = store;
     sessionOptions.proxy = true;
-    sessionOptions.cookie.secure = true;
+    sessionOptions.cookie = {
+        secure: true,
+    };
 }
 
 app.use(session(sessionOptions));

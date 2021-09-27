@@ -24,5 +24,8 @@
         "start": "node src/index.js",
         "serve": "nodemon src/index.js",
         "deploy": "git push heroku main"
+    },
+    "engines": {
+        "node": ">=14.17.6"
     }
 }
