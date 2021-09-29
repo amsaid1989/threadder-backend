@@ -48,7 +48,7 @@ router.get("/request_token", (req, res, next) => {
                     }
                 });
             } else {
-                res.send("Callback not confirmed");
+                res.status(500).send("Internal server error");
             }
         })
         .catch(next);
@@ -84,7 +84,10 @@ router.get("/callback", (req, res, next) => {
             );
 
             const redirectURL = queryString.stringifyUrl({
-                url: "/",
+                url:
+                    process.env.NODE_ENV === "development"
+                        ? "http://localhost:3000"
+                        : "/",
                 query: req.session.user,
             });
 

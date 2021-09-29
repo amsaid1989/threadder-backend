@@ -15,15 +15,17 @@ const PORT = process.env.PORT;
 const _dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const staticPath = path.join(_dirname, "public");
 
-// const corsOptions = {
-//     origin: ["http://localhost:3000", "https://amsaid1989.github.io"],
-//     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-//     credentials: true,
-// };
+if (process.env.NODE_ENV === "development") {
+    const corsOptions = {
+        origin: ["http://localhost:3000"],
+        methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+        credentials: true,
+    };
 
-// app.options("*", cors(corsOptions));
+    app.options("*", cors(corsOptions));
 
-// app.use(cors(corsOptions));
+    app.use(cors(corsOptions));
+}
 
 app.use(express.static(staticPath));
 
