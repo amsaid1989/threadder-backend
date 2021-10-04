@@ -1,0 +1,4 @@
+[submodule "src/public"]
+	path = src/public
+	url = https://github.com/amsaid1989/threadder
+	branch = gh-pages
