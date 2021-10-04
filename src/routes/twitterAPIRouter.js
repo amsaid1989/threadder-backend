@@ -74,11 +74,11 @@ router.get("/callback", (req, res, next) => {
             return getUserData(user_id);
         })
         .then((user) => {
-            const { name, profile_image_url } = user.data;
+            const { name, profile_image_url_https } = user.data;
 
             // Complete saving the user data in the user session
             req.session.user.name = name;
-            req.session.user.profileImage = profile_image_url.replace(
+            req.session.user.profileImage = profile_image_url_https.replace(
                 "_normal",
                 ""
             );
