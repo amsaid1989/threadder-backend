@@ -16,9 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: List directory
-        run: ls -al
-
       - name: Set up Node.js version
         uses: actions/setup-node@v1
         with:
