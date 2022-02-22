@@ -86,7 +86,7 @@ router.get("/callback", (req, res, next) => {
             const redirectURL = queryString.stringifyUrl({
                 url:
                     process.env.NODE_ENV === "development"
-                        ? "http://localhost:3000"
+                        ? process.env.DEV_SERVER
                         : "/",
                 query: req.session.user,
             });
