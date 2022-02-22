@@ -6,7 +6,7 @@
     "author": "Abdelrahman <said.abdelrahman89@gmail.com>",
     "license": "MIT",
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.21.2",
         "connect-mongodb-session": "^3.0.0",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
