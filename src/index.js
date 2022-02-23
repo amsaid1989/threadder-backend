@@ -55,7 +55,6 @@ const sessionOptions = {
 };
 
 if (process.env.NODE_ENV === "production") {
-    // set the trust proxy for Heroku
     app.set("trust proxy", 1);
 
     sessionOptions.store = store;
