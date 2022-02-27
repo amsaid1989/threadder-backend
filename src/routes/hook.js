@@ -26,6 +26,26 @@ router.post("/hook", (req, res) => {
             console.log(`stdout: ${stdout}`);
             res.sendStatus(200);
         });
+    } else if (name === "threadder") {
+        exec(
+            "git submodule update --remote --recursive",
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`Error: ${error.message}`);
+                    res.sendStatus(500);
+                    return;
+                }
+
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    res.sendStatus(500);
+                    return;
+                }
+
+                console.log(`stdout: ${stdout}`);
+                res.sendStatus(200);
+            }
+        );
     }
 });
 
