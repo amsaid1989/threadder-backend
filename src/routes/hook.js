@@ -66,22 +66,18 @@ router.post("/hook", (req, res) => {
             process.env.NODE_ENV === "production"
                 ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
                 : "git submodule update --remote --recursive";
-        exec(cmd, (error, stdout, stderr) => {
-            if (error) {
-                logger.error(error.message);
-                res.sendStatus(500);
-                return;
-            }
 
-            if (stderr) {
-                logger.error(stderr);
-                res.sendStatus(500);
-                return;
-            }
+        executeCommand(cmd)
+            .then((result) => {
+                logger.info(result);
 
-            logger.info(stdout);
-            res.sendStatus(200);
-        });
+                res.status(200).send("Command succeeded");
+            })
+            .catch((err) => {
+                logger.error(err);
+
+                res.status(500).send("Command failed");
+            });
     }
 });
 
