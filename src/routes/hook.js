@@ -7,24 +7,26 @@ router.use(express.json());
 
 router.post("/hook", (req, res) => {
     console.log("Received hook data from GitHub");
-    console.log(req.body.repository.name);
-    // exec(
-    //     "git pull https://github.com/amsaid1989/threadder-backend.git webhooks",
-    //     (error, stdout, stderr) => {
-    //         if (error) {
-    //             console.log(`Error: ${error.message}`);
-    //             return;
-    //         }
+    const { name } = req.body.repository;
 
-    //         if (stderr) {
-    //             console.log(`stderr: ${stderr}`);
-    //             return;
-    //         }
+    if (name === "threadder-backend") {
+        exec("git pull --all", (error, stdout, stderr) => {
+            if (error) {
+                console.log(`Error: ${error.message}`);
+                res.sendStatus(500);
+                return;
+            }
 
-    //         console.log(`stdout: ${stdout}`);
-    //     }
-    // );
-    res.sendStatus(200);
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                res.sendStatus(500);
+                return;
+            }
+
+            console.log(`stdout: ${stdout}`);
+            res.sendStatus(200);
+        });
+    }
 });
 
 export default router;
