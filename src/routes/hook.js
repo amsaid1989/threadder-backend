@@ -3,6 +3,22 @@ import express from "express";
 import { exec } from "child_process";
 import logger from "../utils/logger.js";
 
+function executeCommand(cmd) {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject(error.message);
+            }
+
+            if (stderr) {
+                reject(stderr);
+            }
+
+            resolve(stdout);
+        });
+    });
+}
+
 dotenv.config();
 
 const router = express.Router();
@@ -34,28 +50,17 @@ router.post("/hook", (req, res) => {
                 ? "git pull --all&&pm2 restart --update-env threadder"
                 : "git pull --all";
 
-        let command_succeeded = false;
+        executeCommand(cmd)
+            .then((result) => {
+                logger.info(result);
 
-        exec(cmd, (error, stdout, stderr) => {
-            if (error) {
-                logger.error(error.message);
-                return;
-            }
+                res.status(200).send("Command succeeded");
+            })
+            .catch((err) => {
+                logger.error(err);
 
-            if (stderr) {
-                logger.error(stderr);
-                return;
-            }
-
-            logger.info(stdout);
-            command_succeeded = true;
-        });
-
-        if (command_succeeded) {
-            res.status(200).send("Command succeeded");
-        } else {
-            res.status(500).send("Command failed");
-        }
+                res.status(500).send("Command failed");
+            });
     } else if (name === "threadder") {
         const cmd =
             process.env.NODE_ENV === "production"
