@@ -15,7 +15,8 @@
         "form-data": "^4.0.0",
         "multer": "^1.4.3",
         "oauth-1.0a": "^2.2.6",
-        "query-string": "^7.0.1"
+        "query-string": "^7.0.1",
+        "winston": "^3.6.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.12"

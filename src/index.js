@@ -5,6 +5,7 @@ import express from "express";
 import session from "express-session";
 import cors from "cors";
 import mongoConnect from "connect-mongodb-session";
+import logger from "./utils/logger.js";
 import twitterRouter from "./routes/twitterAPIRouter.js";
 import sessionEndRouter from "./routes/sessionEndRouter.js";
 import hooksRouter from "./routes/hook.js";
@@ -38,14 +39,14 @@ const store = new MongoDBStore(
     },
     function (err) {
         if (err) {
-            console.log(err);
+            logger.error(err);
         }
     }
 );
 
 store.on("error", function (err) {
     if (err) {
-        console.log(err);
+        logger.error(err);
     }
 });
 

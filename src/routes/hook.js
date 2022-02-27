@@ -1,5 +1,6 @@
 import express from "express";
 import { exec } from "child_process";
+import logger from "../utils/logger.js";
 
 const router = express.Router();
 
@@ -11,18 +12,18 @@ router.post("/hook", (req, res) => {
     if (name === "threadder-backend") {
         exec("git pull --all", (error, stdout, stderr) => {
             if (error) {
-                console.log(`Error: ${error.message}`);
+                logger.error(error.message);
                 res.sendStatus(500);
                 return;
             }
 
             if (stderr) {
-                console.log(`stderr: ${stderr}`);
+                logger.error(stderr);
                 res.sendStatus(500);
                 return;
             }
 
-            console.log(`stdout: ${stdout}`);
+            logger.info(stdout);
             res.sendStatus(200);
         });
     } else if (name === "threadder") {
@@ -30,18 +31,18 @@ router.post("/hook", (req, res) => {
             "git submodule update --remote --recursive",
             (error, stdout, stderr) => {
                 if (error) {
-                    console.log(`Error: ${error.message}`);
+                    logger.error(error.message);
                     res.sendStatus(500);
                     return;
                 }
 
                 if (stderr) {
-                    console.log(`stderr: ${stderr}`);
+                    logger.error(stderr);
                     res.sendStatus(500);
                     return;
                 }
 
-                console.log(`stdout: ${stdout}`);
+                logger.info(stdout);
                 res.sendStatus(200);
             }
         );

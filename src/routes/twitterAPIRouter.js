@@ -9,6 +9,7 @@ import {
     getUserData,
     publishThread,
 } from "../utils/twitterWrappers.js";
+import logger from "../utils/logger.js";
 
 dotenv.config();
 
@@ -42,12 +43,13 @@ router.get("/request_token", (req, res, next) => {
 
                 req.session.save(function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                     } else {
                         res.json({ redirect: redirectURL });
                     }
                 });
             } else {
+                logger.error("Callback not confirmed");
                 res.status(500).send("Internal server error");
             }
         })
@@ -114,6 +116,8 @@ router.post("/publish_thread", (req, res, next) => {
             )
         )
     ) {
+        logger.error("Thread not formatted appropriately");
+
         res.status(400).send("Bad request");
 
         return;
@@ -160,6 +164,8 @@ router.post("/upload_media", (req, res, next) => {
             if (req?.file?.media_id) {
                 res.json({ media_id: req.file.media_id });
             } else {
+                logger.error("Failed to upload media");
+
                 res.status(500).send("Upload failed");
             }
         }
