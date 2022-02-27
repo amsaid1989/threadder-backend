@@ -10,6 +10,8 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/hook", (req, res) => {
+    logger.info("Parsing /hook request");
+
     const { name } = req.body.repository;
 
     if (!name) {
