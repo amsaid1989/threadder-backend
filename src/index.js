@@ -7,6 +7,7 @@ import cors from "cors";
 import mongoConnect from "connect-mongodb-session";
 import twitterRouter from "./routes/twitterAPIRouter.js";
 import sessionEndRouter from "./routes/sessionEndRouter.js";
+import hooksRouter from "./routes/hook.js";
 
 dotenv.config();
 
@@ -72,6 +73,7 @@ app.get("/", (req, res) => {
 
 app.use(twitterRouter);
 app.use(sessionEndRouter);
+app.use(hooksRouter);
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`);
