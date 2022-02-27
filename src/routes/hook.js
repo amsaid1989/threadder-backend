@@ -7,7 +7,7 @@ router.use(express.json());
 
 router.post("/hook", (req, res) => {
     console.log("Received hook data from GitHub");
-    exec("ls -al", (error, stdout, stderr) => {
+    exec("git pull --all", (error, stdout, stderr) => {
         if (error) {
             console.log(`Error: ${error.message}`);
             return;
