@@ -13,7 +13,7 @@ router.post("/hook", (req, res) => {
     const { name } = req.body.repository;
 
     if (name === "threadder-backend") {
-        const cmd = process.env.NODE_ENV === 'production' ? "git pull --all&&pm2 restart threadder" : "git pull --all"
+        const cmd = process.env.NODE_ENV === 'production' ? "git pull --all&&pm2 restart --update-env threadder" : "git pull --all"
         exec(
             cmd,
             (error, stdout, stderr) => {
@@ -34,7 +34,7 @@ router.post("/hook", (req, res) => {
             }
         );
     } else if (name === "threadder") {
-        const cmd = process.env.NODE_ENV === 'production' ? "git submodule update --remote --recursive&&pm2 restart threadder" : "git submodule update --remote --recursive"
+        const cmd = process.env.NODE_ENV === 'production' ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder" : "git submodule update --remote --recursive"
         exec(
             cmd,
             (error, stdout, stderr) => {
