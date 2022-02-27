@@ -10,7 +10,13 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/hook", (req, res) => {
-    logger.info("Parsing /hook request");
+    if (!req.body || !req.body.repository) {
+        logger.error(
+            "Webhook request not formatted properly. Missing Body or Repository"
+        );
+        res.status(500).send("Hook request failed due to illformatted body");
+        return;
+    }
 
     const { name } = req.body.repository;
 
@@ -18,7 +24,7 @@ router.post("/hook", (req, res) => {
         logger.error(
             "Request body is not formatted properly. It should include repository.name, but it does not"
         );
-        res.sendStatus(500);
+        res.status(500).send("Hook request failed due to illformatted body");
         return;
     }
 
@@ -27,22 +33,29 @@ router.post("/hook", (req, res) => {
             process.env.NODE_ENV === "production"
                 ? "git pull --all&&pm2 restart --update-env threadder"
                 : "git pull --all";
+
+        let command_succeeded = false;
+
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
                 logger.error(error.message);
-                res.sendStatus(500);
                 return;
             }
 
             if (stderr) {
                 logger.error(stderr);
-                res.sendStatus(500);
                 return;
             }
 
             logger.info(stdout);
-            res.sendStatus(200);
+            command_succeeded = true;
         });
+
+        if (command_succeeded) {
+            res.status(200).send("Command succeeded");
+        } else {
+            res.status(500).send("Command failed");
+        }
     } else if (name === "threadder") {
         const cmd =
             process.env.NODE_ENV === "production"
