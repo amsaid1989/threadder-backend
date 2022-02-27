@@ -7,7 +7,7 @@ router.use(express.json());
 
 router.post("/hook", (req, res) => {
     console.log("Received hook data from GitHub");
-    console.log(req.body.repository);
+    console.log(req.body.repository.name);
     // exec(
     //     "git pull https://github.com/amsaid1989/threadder-backend.git webhooks",
     //     (error, stdout, stderr) => {
