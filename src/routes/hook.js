@@ -12,6 +12,14 @@ router.use(express.json());
 router.post("/hook", (req, res) => {
     const { name } = req.body.repository;
 
+    if (!name) {
+        logger.error(
+            "Request body is not formatted properly. It should include repository.name, but it does not"
+        );
+        res.sendStatus(500);
+        return;
+    }
+
     if (name === "threadder-backend") {
         const cmd =
             process.env.NODE_ENV === "production"
