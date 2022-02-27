@@ -6,7 +6,6 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/hook", (req, res) => {
-    console.log("Received hook data from GitHub");
     const { name } = req.body.repository;
 
     if (name === "threadder-backend") {
