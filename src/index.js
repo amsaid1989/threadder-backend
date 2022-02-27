@@ -77,5 +77,5 @@ app.use(sessionEndRouter);
 app.use(hooksRouter);
 
 app.listen(PORT, () => {
-    console.log(`App is listening on port ${PORT}`);
+    logger.info(`App is listening on port ${PORT}`);
 });
