@@ -32,14 +32,9 @@ router.post("/hook", (req, res) => {
     }
 
     if (name === "threadder-backend") {
-        const cmd =
-            process.env.NODE_ENV === "production"
-                ? "git pull --all&&pm2 restart --update-env threadder"
-                : "git pull --all";
-
         logger.info("Attempting to pull the updates from the backend repo");
 
-        exec(cmd, (error, stdout, stderr) => {
+        exec("git pull --all", (error, stdout, stderr) => {
             if (error) {
                 logger.error(error.message);
             }
@@ -50,6 +45,10 @@ router.post("/hook", (req, res) => {
 
             if (stdout && stdout !== "") {
                 logger.info(stdout);
+            }
+
+            if (process.env.NODE_ENV === "production") {
+                exec("pm2 restart --update-env threadder");
             }
         });
 
