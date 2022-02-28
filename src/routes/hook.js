@@ -10,6 +10,12 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/hook", (req, res) => {
+    /**
+     * TODO (Abdelrahman): Try to see if there is a way to log the output of the command
+     * to the console or the file log.
+     *
+     * TODO (Abdelrahman): Secure the webhook using the secret.
+     */
     if (!req.body || !req.body.repository) {
         logger.error(
             "Webhook request not formatted properly. Missing Body or Repository"
