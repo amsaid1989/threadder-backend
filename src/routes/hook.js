@@ -60,19 +60,22 @@ router.post("/hook", (req, res) => {
                 res.status(500).send("Failed");
             });
     } else if (name === "threadder") {
-        // const cmd =
-        //     process.env.NODE_ENV === "production"
-        //         ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
-        //         : "git submodule update --remote --recursive";
-        // executeCommand(cmd)
-        //     .then((result) => {
-        //         logger.info(result);
-        //         res.status(200).send("Command succeeded");
-        //     })
-        //     .catch((err) => {
-        //         logger.error(err);
-        //         res.status(500).send("Command failed");
-        //     });
+        const cmd =
+            process.env.NODE_ENV === "production"
+                ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
+                : "git submodule update --remote --recursive";
+
+        executeCommand(cmd)
+            .then((result) => {
+                console.log(result);
+
+                res.status(200).send("Completed");
+            })
+            .catch((err) => {
+                console.log(err);
+
+                res.status(500).send("Failed");
+            });
     }
 });
 
