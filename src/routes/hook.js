@@ -24,6 +24,10 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/hook", (req, res) => {
+    /**
+     * TODO (Abdelrahman): Figure out how to log the result of the command
+     * even after the server responds
+     */
     if (!req.body || !req.body.repository) {
         logger.error(
             "Webhook request not formatted properly. Missing Body or Repository"
