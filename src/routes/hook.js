@@ -42,15 +42,15 @@ router.post("/hook", (req, res) => {
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
                 logger.error(error.message);
-                return;
             }
 
             if (stderr && stderr !== "") {
                 logger.error(stderr);
-                return;
             }
 
-            logger.info(stdout);
+            if (stdout && stdout !== "") {
+                logger.info(stdout);
+            }
         });
 
         res.status(200).send("Webhook payload received");
