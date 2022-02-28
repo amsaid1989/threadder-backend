@@ -22,26 +22,28 @@ function middleware(req, res, next) {
         return;
     }
 
-    const pull = spawn("git", ["pull", "--all"], {
-        stdio: ["ignore", "pipe", "pipe"],
-    });
-
-    pull.stdout.pipe(res, { end: false });
-    pull.stderr.pipe(res, { end: false });
-
-    pull.on("exit", (exitCode) => {
-        console.log(exitCode);
-
-        const pm = spawn("pm2", ["restart", "--update-env", "threadder"], {
+    if (name === "threadder-backend") {
+        const pull = spawn("git", ["pull", "--all"], {
             stdio: ["ignore", "pipe", "pipe"],
         });
-        pm.stdout.pipe(res, { end: false });
-        pm.stderr.pipe(res, { end: false });
 
-        pm.on("exit", (exitCode) => {
-            next();
+        pull.stdout.pipe(res, { end: false });
+        pull.stderr.pipe(res, { end: false });
+
+        pull.on("exit", (exitCode) => {
+            console.log(exitCode);
+
+            const pm = spawn("pm2", ["restart", "--update-env", "threadder"], {
+                stdio: ["ignore", "pipe", "pipe"],
+            });
+            pm.stdout.pipe(res, { end: false });
+            pm.stderr.pipe(res, { end: false });
+
+            pm.on("exit", (exitCode) => {
+                next();
+            });
         });
-    });
+    }
 }
 
 dotenv.config();
