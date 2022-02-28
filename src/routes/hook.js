@@ -51,14 +51,12 @@ router.post("/hook", (req, res) => {
         executeCommand(cmd)
             .then((result) => {
                 console.log(result);
-
-                res.status(200).send("Completed");
             })
             .catch((err) => {
                 console.log(err);
-
-                res.status(500).send("Failed");
             });
+
+        res.status(200).send("Completed");
     } else if (name === "threadder") {
         const cmd =
             process.env.NODE_ENV === "production"
@@ -68,14 +66,12 @@ router.post("/hook", (req, res) => {
         executeCommand(cmd)
             .then((result) => {
                 console.log(result);
-
-                res.status(200).send("Completed");
             })
             .catch((err) => {
                 console.log(err);
-
-                res.status(500).send("Failed");
             });
+
+        res.status(200).send("Completed");
     }
 });
 
