@@ -11,9 +11,6 @@ router.use(express.json());
 
 router.post("/hook", (req, res) => {
     /**
-     * TODO (Abdelrahman): Try to see if there is a way to log the output of the command
-     * to the console or the file log.
-     *
      * TODO (Abdelrahman): Secure the webhook using the secret.
      */
     if (!req.body || !req.body.repository) {
@@ -42,7 +39,19 @@ router.post("/hook", (req, res) => {
 
         logger.info("Attempting to pull the updates from the backend repo");
 
-        exec(cmd);
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                logger.error(error.message);
+                return;
+            }
+
+            if (stderr && stderr !== "") {
+                logger.error(stderr);
+                return;
+            }
+
+            logger.info(stdout);
+        });
 
         res.status(200).send("Webhook payload received");
     }
