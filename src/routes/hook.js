@@ -1,14 +1,34 @@
 import dotenv from "dotenv";
 import express from "express";
-import { spawn } from "child_process";
+import { exec } from "child_process";
 import logger from "../utils/logger.js";
 
-function middleware(req, res, next) {
+function executeCommand(cmd) {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject(error.message);
+            } else if (stderr && stderr !== "") {
+                reject(stderr);
+            } else {
+                resolve(stdout);
+            }
+        });
+    });
+}
+
+dotenv.config();
+
+const router = express.Router();
+
+router.use(express.json());
+
+router.post("/hook", (req, res) => {
     if (!req.body || !req.body.repository) {
         logger.error(
             "Webhook request not formatted properly. Missing Body or Repository"
         );
-        next();
+        res.status(500).send("Hook request failed due to illformatted body");
         return;
     }
 
@@ -18,96 +38,41 @@ function middleware(req, res, next) {
         logger.error(
             "Request body is not formatted properly. It should include repository.name, but it does not"
         );
-        next();
+        res.status(500).send("Hook request failed due to illformatted body");
         return;
     }
 
     if (name === "threadder-backend") {
-        const pull = spawn("git", ["pull", "--all"], {
-            stdio: ["ignore", "pipe", "pipe"],
-        });
+        const cmd =
+            process.env.NODE_ENV === "production"
+                ? "git pull --all&&pm2 restart --update-env threadder"
+                : "git pull --all";
 
-        pull.stdout.pipe(res, { end: false });
-        pull.stderr.pipe(res, { end: false });
-
-        pull.on("exit", (exitCode) => {
-            console.log(exitCode);
-
-            const pm = spawn("pm2", ["restart", "--update-env", "threadder"], {
-                stdio: ["ignore", "pipe", "pipe"],
+        executeCommand(cmd)
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((err) => {
+                console.log(err);
             });
-            pm.stdout.pipe(res, { end: false });
-            pm.stderr.pipe(res, { end: false });
 
-            pm.on("exit", (exitCode) => {
-                next();
+        res.status(200).send("Webhook payload received");
+    } else if (name === "threadder") {
+        const cmd =
+            process.env.NODE_ENV === "production"
+                ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
+                : "git submodule update --remote --recursive";
+
+        executeCommand(cmd)
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((err) => {
+                console.log(err);
             });
-        });
+
+        res.status(200).send("Webhook payload received");
     }
-}
-
-dotenv.config();
-
-const router = express.Router();
-
-router.use(express.json());
-
-router.use(middleware);
-
-router.post("/hook", (req, res) => {
-    res.status(200).send("Completed");
 });
-
-// router.post("/hook", (req, res) => {
-//     if (!req.body || !req.body.repository) {
-//         logger.error(
-//             "Webhook request not formatted properly. Missing Body or Repository"
-//         );
-//         res.status(500).send("Hook request failed due to illformatted body");
-//         return;
-//     }
-
-//     const { name } = req.body.repository;
-
-//     if (!name) {
-//         logger.error(
-//             "Request body is not formatted properly. It should include repository.name, but it does not"
-//         );
-//         res.status(500).send("Hook request failed due to illformatted body");
-//         return;
-//     }
-
-//     if (name === "threadder-backend") {
-//         const cmd =
-//             process.env.NODE_ENV === "production"
-//                 ? "git pull --all&&pm2 restart --update-env threadder"
-//                 : "git pull --all";
-
-//         executeCommand(cmd)
-//             .then((result) => {
-//                 console.log(result);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-
-//         res.status(200).send("Completed");
-//     } else if (name === "threadder") {
-//         const cmd =
-//             process.env.NODE_ENV === "production"
-//                 ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
-//                 : "git submodule update --remote --recursive";
-
-//         executeCommand(cmd)
-//             .then((result) => {
-//                 console.log(result);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-
-//         res.status(200).send("Completed");
-//     }
-// });
 
 export default router;
