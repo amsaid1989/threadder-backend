@@ -48,7 +48,15 @@ router.post("/hook", (req, res) => {
             }
 
             if (process.env.NODE_ENV === "production") {
-                exec("pm2 reload threadder");
+                exec("pm2 reload threadder", (error, stdout, stderr) => {
+                    if (error) {
+                        logger.error(error.message);
+                    }
+
+                    if (stderr && stderr !== "") {
+                        logger.error(stderr);
+                    }
+                });
             }
         });
 
