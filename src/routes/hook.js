@@ -10,10 +10,6 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/hook", (req, res) => {
-    /**
-     * TODO (Abdelrahman): Figure out how to log the result of the command
-     * even after the server responds
-     */
     if (!req.body || !req.body.repository) {
         logger.error(
             "Webhook request not formatted properly. Missing Body or Repository"
@@ -38,6 +34,8 @@ router.post("/hook", (req, res) => {
                 ? "git pull --all&&pm2 restart --update-env threadder"
                 : "git pull --all";
 
+        logger.info("Attempting to pull the updates from the backend repo");
+
         exec(cmd);
 
         res.status(200).send("Webhook payload received");
@@ -46,6 +44,10 @@ router.post("/hook", (req, res) => {
             process.env.NODE_ENV === "production"
                 ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
                 : "git submodule update --remote --recursive";
+
+        logger.info(
+            "Attempting to pull the updates from the frontend submodule"
+        );
 
         exec(cmd);
 
