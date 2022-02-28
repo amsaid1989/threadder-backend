@@ -3,20 +3,6 @@ import express from "express";
 import { exec } from "child_process";
 import logger from "../utils/logger.js";
 
-function executeCommand(cmd) {
-    return new Promise((resolve, reject) => {
-        exec(cmd, (error, stdout, stderr) => {
-            if (error) {
-                reject(error.message);
-            } else if (stderr && stderr !== "") {
-                reject(stderr);
-            } else {
-                resolve(stdout);
-            }
-        });
-    });
-}
-
 dotenv.config();
 
 const router = express.Router();
@@ -52,13 +38,7 @@ router.post("/hook", (req, res) => {
                 ? "git pull --all&&pm2 restart --update-env threadder"
                 : "git pull --all";
 
-        executeCommand(cmd)
-            .then((result) => {
-                console.log(result);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        exec(cmd);
 
         res.status(200).send("Webhook payload received");
     } else if (name === "threadder") {
@@ -67,13 +47,7 @@ router.post("/hook", (req, res) => {
                 ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
                 : "git submodule update --remote --recursive";
 
-        executeCommand(cmd)
-            .then((result) => {
-                console.log(result);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        exec(cmd);
 
         res.status(200).send("Webhook payload received");
     }
