@@ -1,7 +1,21 @@
 import dotenv from "dotenv";
 import express from "express";
-import { execSync } from "child_process";
+import { exec } from "child_process";
 import logger from "../utils/logger.js";
+
+function executeCommand(cmd) {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject(error.message);
+            } else if (stderr !== "") {
+                reject(stderr);
+            } else {
+                resolve(stdout);
+            }
+        });
+    });
+}
 
 dotenv.config();
 
@@ -34,10 +48,17 @@ router.post("/hook", (req, res) => {
                 ? "git pull --all&&pm2 restart --update-env threadder"
                 : "git pull --all";
 
-        const output = execSync(cmd);
-        console.log(output);
+        executeCommand(cmd)
+            .then((result) => {
+                console.log(result);
 
-        res.status(200).send("Completed");
+                res.status(200).send("Completed");
+            })
+            .catch((err) => {
+                console.log(err);
+
+                res.status(500).send("Failed");
+            });
     } else if (name === "threadder") {
         // const cmd =
         //     process.env.NODE_ENV === "production"
