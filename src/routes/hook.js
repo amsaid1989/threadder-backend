@@ -39,19 +39,6 @@ router.post("/hook", (req, res) => {
         exec(cmd);
 
         res.status(200).send("Webhook payload received");
-    } else if (name === "threadder") {
-        const cmd =
-            process.env.NODE_ENV === "production"
-                ? "git submodule update --remote --recursive&&pm2 restart --update-env threadder"
-                : "git submodule update --remote --recursive";
-
-        logger.info(
-            "Attempting to pull the updates from the frontend submodule"
-        );
-
-        exec(cmd);
-
-        res.status(200).send("Webhook payload received");
     }
 });
 
