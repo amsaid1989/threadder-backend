@@ -8,7 +8,7 @@ function executeCommand(cmd) {
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
                 reject(error.message);
-            } else if (stderr !== "") {
+            } else if (stderr && stderr !== "") {
                 reject(stderr);
             } else {
                 resolve(stdout);
